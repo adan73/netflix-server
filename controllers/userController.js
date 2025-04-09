@@ -26,12 +26,14 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { phone , email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'the user not found, check the email again' });
+    const user = await User.findOne({ $or: [{ phone }, { email }] });
 
+    if (!user) {
+      return res.status(400).json({ message: 'User not found. Try again.' });
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'wrong password, try again' });
 
