@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const avatarRoutes = require('./routes/avatars');
+const moviesRoutes = require('./routes/movies');
 
 dotenv.config();
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/avatars', avatarRoutes);
+app.use('/api/movies', moviesRoutes); 
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
