@@ -104,7 +104,7 @@ const movieSchema = new mongoose.Schema({
     default: [],
   },
   rank: {
-    type: [String], 
+    type: String, 
     default: [],
   }
 });
