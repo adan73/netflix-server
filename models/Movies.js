@@ -102,6 +102,10 @@ const movieSchema = new mongoose.Schema({
   titleImage: {
     type: [String], 
     default: [],
+  },
+  rank: {
+    type: [String], 
+    default: [],
   }
 });
 
