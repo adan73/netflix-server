@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getAllMovies } = require('../controllers/moviesController');
+const { getAllMovies ,getMoviesById , importPopularFromTMDB} = require('../controllers/moviesController');
 
 router.get('/', getAllMovies);
+router.get('/:_id', getMoviesById);
+router.post('/import/tmdb', importPopularFromTMDB);
 
 module.exports = router;

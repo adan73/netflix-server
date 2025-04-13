@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  myList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movies' }],
 });
 
 module.exports = mongoose.model('users', userSchema);

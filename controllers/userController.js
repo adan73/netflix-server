@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Movies = require('../models/Movies');
 
 const register = async (req, res) => {
   const { email, phone, password, role } = req.body;
@@ -49,7 +50,47 @@ const login = async (req, res) => {
   }
 };
 
+const addToMyList = async (req, res) => {
+  const moviesId = req.params._id;
+  const { userId } = req.body;
+
+  if (!userId || !moviesId) {
+    return res.status(400).json({ message: 'Missing userId or moviesId' });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.myList.includes(moviesId)) {
+      return res.status(200).json({ message: 'Already in My List' });
+    }
+
+    user.myList.push(moviesId);
+    await user.save();
+
+    res.status(200).json({ message: 'Added to My List', myList: user.myList });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+const getUserMyList = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const myListContent = await Movies.find({ _id: { $in: user.myList } });
+
+    res.status(200).json(myListContent);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to get My List', error: err.message });
+  }
+};
 module.exports = {
   register,
   login,
+  addToMyList,
+  getUserMyList,
 };
