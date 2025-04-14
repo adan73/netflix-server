@@ -60,9 +60,44 @@ const importPopularFromTMDB = async (req, res) => {
     res.status(500).json({ message: 'Failed to import movies', error: err.message });
   }
 };
-
+const importPopularTvFromTMDB = async (req, res) => {
+    try {
+      const tmdbRes = await fetch(
+        `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1`
+      );
+      const data = await tmdbRes.json();
+  
+      const shows = data.results.map((show) => ({
+        title: show.name,
+        description: show.overview,
+        image: `https://image.tmdb.org/t/p/w500${show.poster_path}`,
+        titleImage: `https://image.tmdb.org/t/p/w500${show.backdrop_path}`,
+        isSeries: true, 
+        cover: false,
+        lists: ['popular'],
+        screenshots: [
+          `https://image.tmdb.org/t/p/w500${show.backdrop_path}`,
+          `https://image.tmdb.org/t/p/w500${show.poster_path}`,
+          `https://image.tmdb.org/t/p/w500${show.poster_path}`,
+        ],
+        cast: 'Unknown (from TMDB)',
+        Director: 'Unknown',
+        "Maturity rating": '16+',
+        type: 'Drama',
+        year: show.first_air_date?.split('-')[0],
+        seasons: show.total_seasons || '1', 
+      }));
+      await Movie.insertMany(shows);
+      res.status(201).json({ message: 'shows imported!', count: shows.length });
+    } catch (err) {
+      console.error(' Failed to import popular TV series from TMDB:', err);
+      res.status(500).json({ message: 'Import failed', error: err });
+    }
+  };
+  
 module.exports = {
   getAllMovies,
   getMoviesById,
   importPopularFromTMDB,
+  importPopularTvFromTMDB,
 };
