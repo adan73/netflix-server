@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const avatarRoutes = require('./routes/avatars');
 const moviesRoutes = require('./routes/movies');
+const reviewRoutes = require('./routes/reviews');
 
 dotenv.config();
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/avatars', avatarRoutes);
 app.use('/api/movies', moviesRoutes); 
+app.use('/api/reviews', reviewRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
