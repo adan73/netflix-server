@@ -94,10 +94,37 @@ const importPopularTvFromTMDB = async (req, res) => {
       res.status(500).json({ message: 'Import failed', error: err });
     }
   };
+  const addNewMovie = async (req, res) => {
+    try {
+      const { title,description, image, titleImage,isSeries,type,year,cast, director, maturityRating,lists,screenshots,} = req.body;
   
+      const newMovie = new Movie({
+        title,
+        description,
+        image,
+        titleImage,
+        isSeries,
+        type,
+        year,
+        cast,
+        director,
+        maturityRating,
+        lists,
+        screenshots,
+      });
+  
+      await newMovie.save();
+      res.status(201).json({ message: 'Movie/Series added successfully', movie: newMovie });
+    } catch (err) {
+      console.error(' Failed to add new movie/series:', err);
+      res.status(500).json({ message: 'Failed to add movie/series', error: err.message });
+    }
+  };
+
 module.exports = {
   getAllMovies,
   getMoviesById,
   importPopularFromTMDB,
   importPopularTvFromTMDB,
+  addNewMovie,
 };
