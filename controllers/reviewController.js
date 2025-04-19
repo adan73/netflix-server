@@ -43,11 +43,42 @@ const getUserReviewForMovie = async (req, res) => {
       res.status(500).json({ message: 'Failed to fetch public reviews', error: err.message });
     }
   };
+  const updateReview = async (req, res) => {
+    const { reviewId } = req.params;
+    const { reviewText, isPublic, rating } = req.body;
   
-
-module.exports = {
+    try {
+      const updated = await Review.findByIdAndUpdate(
+        reviewId,
+        { reviewText, isPublic, rating },
+        { new: true }
+      );
+  
+      if (!updated) return res.status(404).json({ message: 'Review not found' });
+  
+      res.json({ message: 'Review updated', review: updated });
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to update review', error: err.message });
+    }
+  };
+  
+  const deleteReview = async (req, res) => {
+    const { reviewId } = req.params;
+  
+    try {
+      const deleted = await Review.findByIdAndDelete(reviewId);
+      if (!deleted) return res.status(404).json({ message: 'Review not found' });
+  
+      res.json({ message: 'Review deleted' });
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to delete review', error: err.message });
+    }
+  };
+  
+  module.exports = {
     addReview,
     getUserReviewForMovie,
     getPublicReviewsForMovie,
+    updateReview,
+    deleteReview
   };
-  
