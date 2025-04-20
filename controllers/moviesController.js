@@ -120,11 +120,44 @@ const importPopularTvFromTMDB = async (req, res) => {
       res.status(500).json({ message: 'Failed to add movie/series', error: err.message });
     }
   };
-
+  const updateMovie = async (req, res) => {
+    const { id } = req.params;
+    const updates = req.body;
+  
+    try {
+      const updatedMovie = await Movie.findByIdAndUpdate(id, updates, { new: true });
+  
+      if (!updatedMovie) {
+        return res.status(404).json({ message: 'Movie/Series not found' });
+      }
+  
+      res.status(200).json({ message: 'Movie/Series updated', data: updatedMovie });
+    } catch (err) {
+      res.status(500).json({ message: 'Error updating', error: err.message });
+    }
+  };
+  const deleteMovie = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const deleted = await Movie.findByIdAndDelete(id);
+  
+      if (!deleted) {
+        return res.status(404).json({ message: 'Movie/Series not found' });
+      }
+  
+      res.status(200).json({ message: 'Movie/Series deleted' });
+    } catch (err) {
+      res.status(500).json({ message: 'Error deleting', error: err.message });
+    }
+  };
+  
 module.exports = {
   getAllMovies,
   getMoviesById,
   importPopularFromTMDB,
   importPopularTvFromTMDB,
   addNewMovie,
+  updateMovie,
+  deleteMovie,
 };

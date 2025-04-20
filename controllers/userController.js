@@ -118,10 +118,44 @@ const getUserMyList = async (req, res) => {
     res.status(500).json({ message: 'Failed to get My List', error: err.message });
   }
 };
+
+const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { email, phone, password } = req.body;
+
+  try {
+    const updateData = {};
+    if (email) updateData.email = email;
+    if (phone) updateData.phone = phone;
+    if (password) updateData.password = await bcrypt.hash(password, 10);
+
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedUser) return res.status(404).json({ message: 'User not found' });
+
+    res.status(200).json({ message: 'User updated', user: updatedUser });
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating user', error: err.message });
+  }
+};
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await User.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ message: 'User not found' });
+
+    res.status(200).json({ message: 'User deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting user', error: err.message });
+  }
+};
 module.exports = {
   register,
   login,
   addToMyList,
   getUserMyList,
   removeFromMyList,
+  updateUser, 
+  deleteUser,
 };
